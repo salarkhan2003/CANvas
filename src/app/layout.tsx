@@ -1,10 +1,11 @@
+
 import type { Metadata } from 'next';
 import { AppLayout } from '@/components/layout/app-layout';
 import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'NetSpector - CAN/LIN Analyzer',
+  title: 'CANvas - CAN/LIN Analyzer',
   description: 'Simulate, visualize, analyze, and inject faults in CAN/LIN networks.',
 };
 

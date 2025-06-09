@@ -1,3 +1,4 @@
+
 export function Logo(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
@@ -15,7 +16,7 @@ export function Logo(props: React.SVGProps<SVGSVGElement>) {
         fontWeight="bold"
         letterSpacing="0.5"
       >
-        NetSpector
+        CANvas
       </text>
     </svg>
   );

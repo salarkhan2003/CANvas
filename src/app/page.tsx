@@ -1,3 +1,4 @@
+
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +19,7 @@ export default function DashboardPage() {
   return (
     <div className="container mx-auto py-2">
       <PageHeader
-        title="Welcome to NetSpector"
+        title="Welcome to CANvas"
         icon={LayoutDashboard}
         description="Your all-in-one studio for CAN/LIN network simulation, analysis, and fault injection."
       />
@@ -29,7 +30,7 @@ export default function DashboardPage() {
             <div className="md:w-1/2 p-8 flex flex-col justify-center">
               <h2 className="font-headline text-3xl font-bold text-accent mb-4">Analyze. Simulate. Secure.</h2>
               <p className="text-lg text-muted-foreground mb-6">
-                NetSpector empowers engineers, educators, and hobbyists to dive deep into automotive networks.
+                CANvas empowers engineers, educators, and hobbyists to dive deep into automotive networks.
                 Explore real-time traffic, model complex ECU interactions, inject faults to test robustness,
                 and leverage AI for intelligent anomaly detection.
               </p>
@@ -44,8 +45,8 @@ export default function DashboardPage() {
             </div>
             <div className="md:w-1/2 relative min-h-[250px] md:min-h-0">
                <Image 
-                src="https://placehold.co/800x600/282A3A/7DF9FF.png?text=NetSpector+Viz" 
-                alt="Network Visualization" 
+                src="https://placehold.co/800x600/282A3A/7DF9FF.png?text=CANvas+Viz" 
+                alt="CANvas Network Visualization" 
                 layout="fill"
                 objectFit="cover"
                 data-ai-hint="network abstract"

@@ -27,6 +27,9 @@ export default function VehicleSimulatorPage() {
   const [isSimulating, setIsSimulating] = React.useState(false);
   const { toast } = useToast();
 
+  // Ref to track if the component has mounted to prevent useEffect toasts on initial render
+  const isMountedRef = React.useRef(false);
+
   const generateMockMessages = React.useCallback(() => {
     const newMessages: SimulatedMessage[] = [];
     const ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 });
@@ -50,11 +53,12 @@ export default function VehicleSimulatorPage() {
     setGeneratedMessages(prev => [...newMessages, ...prev].slice(0, 50)); // Keep last 50
   }, [speed, rpm, temp, voltage]);
 
+  // Effect for generating messages when simulation is active
   React.useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined;
     if (isSimulating) {
-      generateMockMessages(); // Generate once immediately when started
-      intervalId = setInterval(generateMockMessages, 1000); // Generate messages every second
+      generateMockMessages(); 
+      intervalId = setInterval(generateMockMessages, 1000); 
     }
     return () => {
       if (intervalId) {
@@ -63,16 +67,22 @@ export default function VehicleSimulatorPage() {
     };
   }, [isSimulating, generateMockMessages]);
 
-  const handleToggleSimulation = () => {
-    setIsSimulating(prev => {
-      const newSimulatingState = !prev;
-      if (newSimulatingState) {
+  // Effect for showing toasts when simulation state changes
+  React.useEffect(() => {
+    if (isMountedRef.current) { // Only run after initial mount
+      if (isSimulating) {
         toast({ title: 'Simulation Started', description: 'Generating mock CAN messages.' });
       } else {
         toast({ title: 'Simulation Stopped', description: 'Mock CAN message generation paused.' });
       }
-      return newSimulatingState;
-    });
+    } else {
+      isMountedRef.current = true; // Set to true after first render
+    }
+  }, [isSimulating, toast]);
+
+  const handleToggleSimulation = () => {
+    setIsSimulating(prev => !prev);
+    // Toast calls are now handled by the useEffect hook above
   };
 
   return (

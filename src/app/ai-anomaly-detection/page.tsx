@@ -15,6 +15,19 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Label } from '@/components/ui/label';
 
+const logPlaceholder = `Example CAN Log Lines:
+1609459200.000 1A0#0123456789ABCDEF
+1609459200.100 2B1#AABBCCDD
+1609459200.200 1A0#FEFDCBA987654321
+(000.000000) 1 1A0x Dx 8 01 23 45 67 89 AB CD EF
+(000.100000) 1 2B1x Dx 4 AA BB CC DD
+
+Example LIN Log Lines:
+(0.123456) LIN: Rx ID: 0x3c Data: 01 02 03 04
+(0.234567) LIN: Tx ID: 0x1a Data: FF EE DD
+
+Paste your log data here...`;
+
 export default function AiAnomalyDetectionPage() {
   const [logData, setLogData] = React.useState('');
   const [analysisResult, setAnalysisResult] = React.useState<AnalyzeCanLinTrafficOutput | null>(null);
@@ -60,7 +73,7 @@ export default function AiAnomalyDetectionPage() {
       case 'HIGH':
         return 'destructive';
       case 'MEDIUM':
-        return 'secondary'; // Or another distinct variant
+        return 'secondary'; 
       case 'LOW':
       default:
         return 'outline';
@@ -88,15 +101,15 @@ export default function AiAnomalyDetectionPage() {
             <Label htmlFor="log-data-textarea">CAN/LIN Log Data</Label>
             <Textarea
               id="log-data-textarea"
-              placeholder="Timestamp ID DLC Data... (e.g., 1609459200.000 1A0#0123456789ABCDEF)"
+              placeholder={logPlaceholder}
               value={logData}
               onChange={(e) => setLogData(e.target.value)}
               rows={10}
               className="font-code"
               disabled={isLoading}
             />
-            <div className="flex justify-end gap-2">
-                <Button onClick={() => setLogData('')} variant="outline" disabled={isLoading || !logData}>
+            <div className="flex justify-end gap-2 pt-2">
+                <Button onClick={() => { setLogData(''); setAnalysisResult(null); setError(null); }} variant="outline" disabled={isLoading || !logData}>
                     <XCircle className="mr-2 h-4 w-4" /> Clear
                 </Button>
                 <Button onClick={handleSubmit} disabled={isLoading || !logData.trim()}>
@@ -124,7 +137,7 @@ export default function AiAnomalyDetectionPage() {
       {error && !isLoading && (
         <Card className="border-destructive">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-destructive">
+            <CardTitle className="flex items-center gap-2 text-destructive font-headline">
               <AlertTriangle /> Analysis Error
             </CardTitle>
           </CardHeader>

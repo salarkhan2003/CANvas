@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -54,12 +55,10 @@ export function SidebarNav({ items }: SidebarNavProps) {
                     const isChildActive = pathname === child.href || pathname.startsWith(child.href);
                     return (
                       <SidebarMenuSubItem key={childIndex}>
-                        <Link href={child.href} legacyBehavior passHref>
-                          <SidebarMenuSubButton isActive={isChildActive} aria-disabled={child.disabled}>
-                            {ChildIcon && <ChildIcon />}
-                            <span>{child.title}</span>
-                          </SidebarMenuSubButton>
-                        </Link>
+                        <SidebarMenuSubButton href={child.href} isActive={isChildActive} aria-disabled={child.disabled}>
+                          {ChildIcon && <ChildIcon />}
+                          <span>{child.title}</span>
+                        </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     );
                   })}
@@ -71,7 +70,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
 
         return (
           <SidebarMenuItem key={index}>
-            <Link href={item.href} legacyBehavior passHref>
+            <Link href={item.href}>
               <SidebarMenuButton isActive={isActive} aria-disabled={item.disabled} tooltip={item.title}>
                 <Icon />
                 <span>{item.title}</span>

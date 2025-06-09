@@ -1,5 +1,6 @@
+
 import type { LucideIcon } from 'lucide-react';
-import { LayoutDashboard, Activity, Cpu, Wrench, LineChart, BookOpen, BrainCircuit, Settings } from 'lucide-react';
+import { LayoutDashboard, Activity, Cpu, Wrench, LineChart, BookOpen, BrainCircuit, Settings, FileJson, SlidersHorizontal, TestTubeDiagonal, Download, SearchCode, Atom, Mic } from 'lucide-react';
 
 export interface NavItem {
   title: string;
@@ -47,14 +48,35 @@ export const sidebarNavItems: NavItem[] = [
     href: '/ai-anomaly-detection',
     icon: BrainCircuit,
   },
-  // Example of a group with children
-  // {
-  //   title: 'Settings',
-  //   href: '/settings',
-  //   icon: Settings,
-  //   children: [
-  //     { title: 'Profile', href: '/settings/profile', icon: User },
-  //     { title: 'Appearance', href: '/settings/appearance', icon: SunMoon },
-  //   ]
-  // },
+  {
+    title: 'DBC File Support',
+    href: '/dbc-support',
+    icon: FileJson,
+  },
+  {
+    title: 'Vehicle Simulator',
+    href: '/vehicle-simulator',
+    icon: SlidersHorizontal,
+  },
+  {
+    title: 'Automated Testing',
+    href: '/automated-testing',
+    icon: TestTubeDiagonal,
+  },
+  // Export Logs is part of Bus Monitor
+  {
+    title: 'Advanced Diagnostics',
+    href: '/advanced-diagnostics',
+    icon: SearchCode,
+  },
+  {
+    title: 'AI Decoder Assistant',
+    href: '/ai-decoder-assistant',
+    icon: Atom,
+  },
+  {
+    title: 'Voice Command Sim',
+    href: '/voice-command-simulator',
+    icon: Mic,
+  },
 ];

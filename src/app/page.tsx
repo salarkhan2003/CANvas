@@ -2,7 +2,7 @@
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Activity, BarChart2, BrainCircuit, Cpu, HardDriveDownload, LayoutDashboard, Wrench, FileJson, Puzzle, Zap, SearchCode, Settings2, Palette, Columns, Car, Atom, Mic } from 'lucide-react';
+import { Activity, BarChart2, BrainCircuit, Cpu, HardDriveDownload, LayoutDashboard, Wrench, FileJson, Puzzle, Zap, SearchCode, Settings2, Palette, Columns, Car, Atom, Mic, TestTubeDiagonal, Database, Download, SlidersHorizontal } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -14,14 +14,14 @@ export default function DashboardPage() {
     { name: 'Data Visualization', href: '/data-visualization', icon: BarChart2, description: 'Graphical representation of bus data.' },
     { name: 'AI Anomaly Detection', href: '/ai-anomaly-detection', icon: BrainCircuit, description: 'Identify unusual patterns with AI.' },
     { name: 'Protocol Learning', href: '/protocol-learning', icon: Puzzle, description: 'Understand CAN/LIN frame structures.' },
-    { name: 'DBC File Support', href: '#', icon: FileJson, description: 'Parse DBC files for signal decoding. (Planned)', disabled: true },
-    { name: 'Vehicle Simulator', href: '#', icon: Car, description: 'Simulate vehicle sensor data. (Planned)', disabled: true },
-    { name: 'Automated Testing', href: '#', icon: Zap, description: 'Define and run test scenarios. (Planned)', disabled: true },
-    { name: 'Export Logs', href: '#', icon: HardDriveDownload, description: 'Save captured data to various formats. (Planned)', disabled: true },
-    { name: 'Advanced Diagnostics', href: '#', icon: SearchCode, description: 'Tools for UDS, OBD-II simulation. (Planned)', disabled: true },
-    { name: 'UI Customization', href: '#', icon: Palette, description: 'Themes and multi-bus views. (Planned)', disabled: true },
-    { name: 'AI Decoder Assistant', href: '#', icon: Atom, description: 'AI to help decode unknown signals. (Planned)', disabled: true },
-    { name: 'Voice Control', href: '#', icon: Mic, description: 'Control simulations with voice commands. (Planned)', disabled: true },
+    { name: 'DBC File Support', href: '/dbc-support', icon: FileJson, description: 'Upload and parse DBC files for signal decoding.' },
+    { name: 'Vehicle Simulator', href: '/vehicle-simulator', icon: SlidersHorizontal, description: 'Simulate vehicle sensor data with interactive controls.' },
+    { name: 'Automated Testing', href: '/automated-testing', icon: TestTubeDiagonal, description: 'Define and run mock test scenarios for network validation.' },
+    { name: 'Export Logs', href: '/bus-monitor', icon: Download, description: 'Save captured data from Bus Monitor to CSV/JSON. (Feature on Bus Monitor page)' },
+    { name: 'Advanced Diagnostics', href: '/advanced-diagnostics', icon: SearchCode, description: 'Simulate UDS and OBD-II diagnostic interactions.' },
+    { name: 'UI Customization', href: '#', icon: Palette, description: 'Theme toggles and multi-bus view management. (Dark Mode Default)', disabled: true },
+    { name: 'AI Decoder Assistant', href: '/ai-decoder-assistant', icon: Atom, description: 'AI to help decode unknown CAN signals (mock responses).' },
+    { name: 'Voice Command Simulator', href: '/voice-command-simulator', icon: Mic, description: 'Simulate bus control via text commands.' },
   ];
 
   return (
@@ -65,10 +65,10 @@ export default function DashboardPage() {
       </section>
 
       <section>
-        <h2 className="font-headline text-2xl font-semibold mb-6 text-center">Core & Planned Features</h2>
+        <h2 className="font-headline text-2xl font-semibold mb-6 text-center">Core & Implemented Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {features.map((feature) => (
-            <Card key={feature.name} className="hover:shadow-accent/20 hover:shadow-md transition-shadow duration-300 flex flex-col">
+            <Card key={feature.name} className={`hover:shadow-accent/20 hover:shadow-md transition-shadow duration-300 flex flex-col ${feature.disabled ? 'opacity-70' : ''}`}>
               <CardHeader className="flex-grow">
                 <div className="flex items-center gap-3 mb-2">
                   <feature.icon className="h-8 w-8 text-accent" />
@@ -79,7 +79,7 @@ export default function DashboardPage() {
               <CardContent>
                 <Button asChild variant="outline" className="w-full" disabled={feature.disabled}>
                   <Link href={feature.href}>
-                    {feature.disabled ? 'Coming Soon' : `Explore ${feature.name.split(' ')[0]}`}
+                    {feature.disabled ? 'Planned' : `Explore ${feature.name.split(' ')[0]}`}
                   </Link>
                 </Button>
               </CardContent>

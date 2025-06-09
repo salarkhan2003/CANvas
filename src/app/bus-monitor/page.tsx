@@ -1,0 +1,153 @@
+'use client';
+
+import * as React from 'react';
+import { PageHeader } from '@/components/page-header';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Activity, Play, Pause, Filter, Trash2 } from 'lucide-react';
+import type { BusMessage } from '@/lib/types';
+import { mockBusMessages, generateMockBusMessage } from '@/lib/mock-data';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+
+export default function BusMonitorPage() {
+  const [messages, setMessages] = React.useState<BusMessage[]>(mockBusMessages);
+  const [isPlaying, setIsPlaying] = React.useState(true);
+  const [filterId, setFilterId] = React.useState('');
+  const [filterContent, setFilterContent] = React.useState('');
+  const [filterSender, setFilterSender] = React.useState('');
+  const [filterType, setFilterType] = React.useState<'ALL' | 'CAN' | 'LIN'>('ALL');
+  const [autoScroll, setAutoScroll] = React.useState(true);
+  const scrollAreaRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    if (isPlaying) {
+      intervalId = setInterval(() => {
+        setMessages(prev => [...prev, generateMockBusMessage()].slice(-100)); // Keep last 100 messages
+      }, 1000); // Add new message every second
+    }
+    return () => clearInterval(intervalId);
+  }, [isPlaying]);
+
+  React.useEffect(() => {
+    if (autoScroll && scrollAreaRef.current) {
+      const scrollableViewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
+      if (scrollableViewport) {
+        scrollableViewport.scrollTop = scrollableViewport.scrollHeight;
+      }
+    }
+  }, [messages, autoScroll]);
+
+  const filteredMessages = messages.filter(msg => {
+    const typeMatch = filterType === 'ALL' || msg.type === filterType;
+    const idMatch = filterId === '' || msg.messageId.toLowerCase().includes(filterId.toLowerCase());
+    const contentMatch = filterContent === '' || msg.data.join('').toLowerCase().includes(filterContent.toLowerCase());
+    const senderMatch = filterSender === '' || (msg.sender && msg.sender.toLowerCase().includes(filterSender.toLowerCase()));
+    return typeMatch && idMatch && contentMatch && senderMatch;
+  });
+
+  const clearMessages = () => setMessages([]);
+
+  return (
+    <div>
+      <PageHeader
+        title="Real-time Bus Monitor"
+        icon={Activity}
+        description="Observe and filter CAN/LIN bus messages as they happen."
+        actions={
+          <>
+            <Button onClick={() => setIsPlaying(!isPlaying)} variant="outline">
+              {isPlaying ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
+              {isPlaying ? 'Pause' : 'Play'}
+            </Button>
+            <Button onClick={clearMessages} variant="destructive" className="bg-destructive hover:bg-destructive/90">
+              <Trash2 className="mr-2 h-4 w-4" />
+              Clear Log
+            </Button>
+          </>
+        }
+      />
+
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 font-headline">
+            <Filter className="h-5 w-5 text-accent" />
+            Filters
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <Input placeholder="Filter by Message ID (e.g., 0x1A0)" value={filterId} onChange={e => setFilterId(e.target.value)} />
+          <Input placeholder="Filter by Data Content (e.g., FF00)" value={filterContent} onChange={e => setFilterContent(e.target.value)} />
+          <Input placeholder="Filter by Sender (e.g., Engine ECU)" value={filterSender} onChange={e => setFilterSender(e.target.value)} />
+          <Select value={filterType} onValueChange={(value: 'ALL' | 'CAN' | 'LIN') => setFilterType(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Filter by Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All Types</SelectItem>
+              <SelectItem value="CAN">CAN</SelectItem>
+              <SelectItem value="LIN">LIN</SelectItem>
+            </SelectContent>
+          </Select>
+        </CardContent>
+      </Card>
+      
+      <div className="flex items-center space-x-2 mb-4">
+        <Checkbox id="autoscroll" checked={autoScroll} onCheckedChange={(checked) => setAutoScroll(Boolean(checked))} />
+        <Label htmlFor="autoscroll" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+          Auto-scroll
+        </Label>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-headline">Message Timeline</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ScrollArea className="h-[500px] w-full rounded-md border" ref={scrollAreaRef}>
+            <Table>
+              <TableHeader className="sticky top-0 bg-card z-10">
+                <TableRow>
+                  <TableHead>Timestamp</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Sender</TableHead>
+                  <TableHead>DLC</TableHead>
+                  <TableHead>Data (Hex)</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredMessages.map((msg) => (
+                  <TableRow key={msg.id} className="font-code text-sm">
+                    <TableCell>{msg.timestamp}</TableCell>
+                    <TableCell>
+                      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                        msg.type === 'CAN' ? 'bg-blue-500/20 text-blue-400' : 'bg-purple-500/20 text-purple-400'
+                      }`}>
+                        {msg.type}
+                      </span>
+                    </TableCell>
+                    <TableCell>{msg.messageId}</TableCell>
+                    <TableCell>{msg.sender || 'N/A'}</TableCell>
+                    <TableCell>{msg.dlc}</TableCell>
+                    <TableCell className="truncate max-w-xs">{msg.data.join(' ')}</TableCell>
+                  </TableRow>
+                ))}
+                {filteredMessages.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center text-muted-foreground">
+                      No messages match your filters or log is empty.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </ScrollArea>
+        </CardContent>
+      </Card>
+    </div>

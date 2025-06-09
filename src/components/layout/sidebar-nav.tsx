@@ -70,11 +70,9 @@ export function SidebarNav({ items }: SidebarNavProps) {
         return (
           <SidebarMenuItem key={index}>
             <Link href={item.href}>
-              <SidebarMenuButton asChild isActive={isActive} aria-disabled={item.disabled} tooltip={item.title}>
-                <>
-                  <Icon />
-                  <span>{item.title}</span>
-                </>
+              <SidebarMenuButton isActive={isActive} aria-disabled={item.disabled} tooltip={item.title}>
+                <Icon />
+                <span>{item.title}</span>
               </SidebarMenuButton>
             </Link>
           </SidebarMenuItem>

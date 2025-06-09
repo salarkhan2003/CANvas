@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -32,7 +33,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           <SidebarHeader className="p-4">
             <div className="flex items-center justify-between">
               <Link href="/" className="flex items-center gap-2 text-sidebar-foreground hover:text-sidebar-primary transition-colors">
-                <Logo className="h-8 w-auto text-primary" /> {/* Updated from accent to primary for new theme */}
+                <Logo className="h-8 w-auto text-primary" />
               </Link>
               <div className="block group-data-[collapsible=icon]:hidden md:hidden">
                  <MobileSidebarTrigger />
@@ -59,9 +60,9 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                 </Button>
               )}
                {!showBackButton && (
-                 <Link href="/" passHref legacyBehavior>
-                    <Button variant="ghost" size="icon" aria-label="Go to Dashboard">
-                        <Home className="h-5 w-5" />
+                 <Link href="/">
+                    <Button variant="ghost" size="icon" aria-label="Go to Dashboard" asChild>
+                      <Home className="h-5 w-5" />
                     </Button>
                  </Link>
                )}
@@ -72,7 +73,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             {children}
           </main>
           <footer className="py-4 px-6 text-center text-xs text-muted-foreground border-t border-border">
-            © {new Date().getFullYear()} All rights reserved. Made by Patan Salarkhan. <span className="font-semibold text-primary">CANvas</span> - Advanced Automotive Network Studio.
+            © 2025 All rights reserved. Made by Patan Salarkhan. <span className="font-semibold text-primary">CANvas</span> - Advanced Automotive Network Studio.
           </footer>
         </SidebarInset>
       </div>

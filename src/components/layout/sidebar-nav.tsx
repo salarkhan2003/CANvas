@@ -37,18 +37,18 @@ export function SidebarNav({ items }: SidebarNavProps) {
           return (
             <SidebarMenuItem key={index}>
                <SidebarMenuButton
+                asChild
                 className="justify-between"
                 isActive={isActive}
-                // onClick={() => item.children && item.children.length > 0 ? setOpenGroups(prev => ({...prev, [item.title]: !prev[item.title]})) : null}
-                // asChild={!item.children || item.children.length === 0}
               >
-                <div className="flex items-center gap-2">
-                  <Icon />
-                  <span>{item.title}</span>
-                </div>
-                <ChevronDown className={cn("h-4 w-4 transition-transform", /* openGroups[item.title] ? "rotate-180" : "" */)} />
+                <>
+                  <div className="flex items-center gap-2">
+                    <Icon />
+                    <span>{item.title}</span>
+                  </div>
+                  <ChevronDown className={cn("h-4 w-4 transition-transform")} />
+                </>
               </SidebarMenuButton>
-              {/* {openGroups[item.title] && ( */}
                 <SidebarMenuSub>
                   {item.children.map((child, childIndex) => {
                     const ChildIcon = child.icon;
@@ -63,7 +63,6 @@ export function SidebarNav({ items }: SidebarNavProps) {
                     );
                   })}
                 </SidebarMenuSub>
-              {/* )} */}
             </SidebarMenuItem>
           );
         }
@@ -71,9 +70,11 @@ export function SidebarNav({ items }: SidebarNavProps) {
         return (
           <SidebarMenuItem key={index}>
             <Link href={item.href}>
-              <SidebarMenuButton isActive={isActive} aria-disabled={item.disabled} tooltip={item.title}>
-                <Icon />
-                <span>{item.title}</span>
+              <SidebarMenuButton asChild isActive={isActive} aria-disabled={item.disabled} tooltip={item.title}>
+                <>
+                  <Icon />
+                  <span>{item.title}</span>
+                </>
               </SidebarMenuButton>
             </Link>
           </SidebarMenuItem>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -124,4 +125,8 @@ export default function DataVisualizationPage() {
               <p className="text-muted-foreground">Please select a signal to visualize its data.</p>
             </div>
           </CardContent>
-        </
+        </Card>
+      )}
+    </div>
+  );
+}

@@ -5,8 +5,8 @@ import { Toaster } from '@/components/ui/toaster';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'CANvas - CAN/LIN Analyzer',
-  description: 'Simulate, visualize, analyze, and inject faults in CAN/LIN networks.',
+  title: 'CANvas - Automotive Network Studio',
+  description: 'Simulate, visualize, analyze, and inject faults in CAN/LIN networks with CANvas.',
 };
 
 export default function RootLayout({

@@ -1,3 +1,4 @@
+
 export interface BusMessage {
   id: string; // Unique identifier for the message row
   timestamp: string; // ISO string or formatted time
@@ -16,6 +17,8 @@ export interface EcuNode {
   sendsMessages: { messageId: string; interval: number; dataPattern: string[] }[]; // e.g. [{ messageId: '0x1A0', interval: 100, dataPattern: ["AA", "BB"] }]
 }
 
+export type FaultType = 'bit_error' | 'bus_off' | 'recessive_dominant_flip' | 'timeout';
+
 export interface Anomaly {
   timestamp: string;
   messageId: string;
@@ -29,13 +32,15 @@ export interface AnalysisReport {
 }
 
 export interface ChartDataPoint {
-  time: string; // Formatted time or category
+  time?: string; // Formatted time or category for time-series
+  name?: string; // For categorical data like message IDs or statuses
   value: number;
+  fill?: string; // For individual bar/segment colors
 }
 
 export interface SignalData {
-  name: 'Speed' | 'Temperature' | 'Battery Voltage' | string; // Signal name
-  unit: 'km/h' | '°C' | 'V' | string; // Signal unit
+  name: 'Speed' | 'Temperature' | 'Battery Voltage' | 'Engine Load' | string; // Signal name
+  unit: 'km/h' | '°C' | 'V' | '%' | string; // Signal unit
   data: ChartDataPoint[]; // Array of data points for the chart
   color?: string; // Optional color for the chart series
 }
@@ -54,4 +59,10 @@ export interface QuizQuestion {
   options: string[];
   correctAnswer: string; // or index
   explanation: string;
+}
+
+export interface CountData {
+  name: string;
+  value: number;
+  fill?: string;
 }

@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -8,38 +9,72 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Wrench, AlertTriangle, Zap, Clock, RotateCcw } from 'lucide-react';
+import { Wrench, AlertTriangle, Zap, Clock, RotateCcw, BarChartHorizontalBig } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import type { FaultType, CountData } from '@/lib/types';
+import { ResponsiveContainer, BarChart, XAxis, YAxis, Tooltip, Bar, CartesianGrid } from 'recharts';
+import { ChartConfig, ChartContainer, ChartTooltipContent } from '@/components/ui/chart';
 
-type FaultType = 'bit_error' | 'bus_off' | 'recessive_dominant_flip' | 'timeout';
+const FAULT_TYPE_DETAILS: Record<FaultType, { icon: React.ElementType, label: string, color: string }> = {
+  'bit_error': { icon: Zap, label: 'Bit Error', color: 'hsl(var(--chart-1))' },
+  'bus_off': { icon: AlertTriangle, label: 'Bus-Off', color: 'hsl(var(--chart-2))' },
+  'recessive_dominant_flip': { icon: RotateCcw, label: 'R/D Flip', color: 'hsl(var(--chart-3))' },
+  'timeout': { icon: Clock, label: 'Timeout', color: 'hsl(var(--chart-4))' },
+};
 
 interface FaultConfig {
   faultType: FaultType | '';
   targetMessageId?: string;
   targetNode?: string;
-  bitPosition?: number; // For bit error
-  timeoutDuration?: number; // For timeout
+  bitPosition?: number;
+  timeoutDuration?: number;
 }
+
+const initialFaultCounts: Record<FaultType, number> = {
+  bit_error: 0,
+  bus_off: 0,
+  recessive_dominant_flip: 0,
+  timeout: 0,
+};
+
+const initialChartConfig: ChartConfig = Object.fromEntries(
+  Object.entries(FAULT_TYPE_DETAILS).map(([key, val]) => [key, { label: val.label, color: val.color }])
+);
+initialChartConfig['count'] = { label: 'Fault Count' };
+
 
 export default function FaultInjectionPage() {
   const [faultConfig, setFaultConfig] = React.useState<FaultConfig>({ faultType: '' });
   const [injectionLog, setInjectionLog] = React.useState<string[]>([]);
+  const [faultCounts, setFaultCounts] = React.useState<Record<FaultType, number>>(initialFaultCounts);
   const { toast } = useToast();
+
+  const faultCountChartData = React.useMemo<CountData[]>(() => {
+    return (Object.keys(faultCounts) as FaultType[])
+      .map(key => ({
+        name: FAULT_TYPE_DETAILS[key].label,
+        value: faultCounts[key],
+        fill: FAULT_TYPE_DETAILS[key].color,
+      }))
+      .filter(item => item.value > 0) // Optionally, only show faults that have occurred
+      .sort((a, b) => b.value - a.value);
+  }, [faultCounts]);
 
   const handleInjectFault = () => {
     if (!faultConfig.faultType) {
       toast({ title: "Error", description: "Please select a fault type.", variant: "destructive" });
       return;
     }
-    const logMessage = `[${new Date().toLocaleTimeString()}] Injected fault: ${faultConfig.faultType}
+    const faultType = faultConfig.faultType;
+    const logMessage = `[${new Date().toLocaleTimeString()}] Injected fault: ${FAULT_TYPE_DETAILS[faultType].label}
     Target ID: ${faultConfig.targetMessageId || 'Any'}
     Target Node: ${faultConfig.targetNode || 'Any'}
     ${faultConfig.faultType === 'bit_error' ? `Bit Position: ${faultConfig.bitPosition || 'N/A'}` : ''}
     ${faultConfig.faultType === 'timeout' ? `Duration: ${faultConfig.timeoutDuration || 'N/A'}ms` : ''}`;
     
-    setInjectionLog(prev => [logMessage, ...prev].slice(0, 20)); // Keep last 20 logs
-    toast({ title: "Fault Injected!", description: `Successfully simulated ${faultConfig.faultType}.`});
-    // Actual fault injection logic would go here
+    setInjectionLog(prev => [logMessage, ...prev].slice(0, 20));
+    setFaultCounts(prev => ({ ...prev, [faultType]: (prev[faultType] || 0) + 1 }));
+    toast({ title: "Fault Injected!", description: `Successfully simulated ${FAULT_TYPE_DETAILS[faultType].label}.`});
   };
 
   const handleSelectChange = (name: keyof FaultConfig, value: string) => {
@@ -73,10 +108,15 @@ export default function FaultInjectionPage() {
                   <SelectValue placeholder="Select fault type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="bit_error"><Zap className="inline-block mr-2 h-4 w-4 text-yellow-400" />Bit Error</SelectItem>
-                  <SelectItem value="bus_off"><AlertTriangle className="inline-block mr-2 h-4 w-4 text-red-400" />Bus-Off Condition</SelectItem>
-                  <SelectItem value="recessive_dominant_flip"><RotateCcw className="inline-block mr-2 h-4 w-4 text-blue-400" />Recessive/Dominant Flip</SelectItem>
-                  <SelectItem value="timeout"><Clock className="inline-block mr-2 h-4 w-4 text-orange-400" />Timeout Scenario</SelectItem>
+                  {(Object.keys(FAULT_TYPE_DETAILS) as FaultType[]).map(ft => {
+                    const Icon = FAULT_TYPE_DETAILS[ft].icon;
+                    return (
+                      <SelectItem key={ft} value={ft}>
+                        <Icon className={`inline-block mr-2 h-4 w-4 text-[${FAULT_TYPE_DETAILS[ft].color}]`} />
+                        {FAULT_TYPE_DETAILS[ft].label}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
@@ -133,7 +173,7 @@ export default function FaultInjectionPage() {
             )}
           </CardContent>
           <CardFooter>
-            <Button onClick={handleInjectFault} className="w-full">
+            <Button onClick={handleInjectFault} className="w-full" disabled={!faultConfig.faultType}>
               <Zap className="mr-2 h-4 w-4" /> Inject Fault
             </Button>
           </CardFooter>
@@ -145,12 +185,36 @@ export default function FaultInjectionPage() {
             <CardDescription>Real-time feedback and observed effects of injected faults. (Simulation)</CardDescription>
           </CardHeader>
           <CardContent>
-            <Textarea
-              readOnly
-              value={injectionLog.length > 0 ? injectionLog.join('\n-----------------\n') : "No faults injected yet. Configure and inject a fault to see logs here."}
-              className="h-80 font-code text-sm bg-muted/30"
-              placeholder="Fault injection logs will appear here..."
-            />
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                <div>
+                    <h3 className="font-semibold mb-2 flex items-center"><BarChartHorizontalBig className="mr-2 h-5 w-5 text-accent"/>Fault Type Frequency</h3>
+                    {faultCountChartData.length > 0 ? (
+                        <ChartContainer config={initialChartConfig} className="h-[150px] w-full">
+                             <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={faultCountChartData} layout="vertical" margin={{ left: 0, right: 10, top: 5, bottom: 0 }}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                                    <XAxis type="number" stroke="hsl(var(--muted-foreground))" allowDecimals={false} />
+                                    <YAxis dataKey="name" type="category" stroke="hsl(var(--muted-foreground))" width={70} className="text-xs truncate" />
+                                    <Tooltip content={<ChartTooltipContent indicator="dot" />} cursor={{ fill: "hsl(var(--accent), 0.3)" }} />
+                                    <Bar dataKey="value" name="Count" radius={[0, 4, 4, 0]} barSize={15}>
+                                      {faultCountChartData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={entry.fill} />
+                                      ))}
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </ChartContainer>
+                    ) : (
+                        <p className="text-sm text-muted-foreground h-[150px] flex items-center justify-center">No faults injected yet to display stats.</p>
+                    )}
+                </div>
+                <Textarea
+                  readOnly
+                  value={injectionLog.length > 0 ? injectionLog.join('\n-----------------\n') : "No faults injected yet. Configure and inject a fault to see logs here."}
+                  className="h-80 xl:h-[calc(150px+2.5rem)] font-code text-sm bg-muted/30" // Adjusted height
+                  placeholder="Fault injection logs will appear here..."
+                />
+            </div>
             <p className="mt-4 text-sm text-muted-foreground">
               <strong>Note:</strong> This is a simulated environment. In a real system, injected faults could have significant impact.
               The Bus Monitor and Node Simulator pages might show the effects of these simulated faults.

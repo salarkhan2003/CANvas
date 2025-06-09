@@ -1,48 +1,59 @@
-import type { BusMessage, EcuNode, SignalData, LearningModule, QuizQuestion } from './types';
+
+import type { BusMessage, EcuNode, SignalData, LearningModule, QuizQuestion, ChartDataPoint } from './types';
 
 export const mockBusMessages: BusMessage[] = [
-  { id: '1', timestamp: new Date(Date.now() - 5000).toLocaleTimeString(), type: 'CAN', messageId: '0x1A0', sender: 'Engine ECU', data: ['01', '23', '45', '67', '89', 'AB', 'CD', 'EF'], dlc: 8 },
-  { id: '2', timestamp: new Date(Date.now() - 4500).toLocaleTimeString(), type: 'LIN', messageId: '0x3C', sender: 'Climate Control', data: ['F0', 'E1'], dlc: 2 },
-  { id: '3', timestamp: new Date(Date.now() - 4000).toLocaleTimeString(), type: 'CAN', messageId: '0x2B1', sender: 'Brake ECU', data: ['11', '22', '33', '44'], dlc: 4 },
-  { id: '4', timestamp: new Date(Date.now() - 3000).toLocaleTimeString(), type: 'CAN', messageId: '0x1A0', sender: 'Engine ECU', data: ['01', '24', '45', '67', '89', 'AB', 'CD', 'EF'], dlc: 8 },
-  { id: '5', timestamp: new Date(Date.now() - 2000).toLocaleTimeString(), type: 'LIN', messageId: '0x3D', sender: 'Window Sensor', data: ['A5'], dlc: 1 },
-  { id: '6', timestamp: new Date(Date.now() - 1000).toLocaleTimeString(), type: 'CAN', messageId: '0x4F0', sender: 'Gateway', data: ['DE', 'AD', 'BE', 'EF', '00', '11', '22', '33'], dlc: 8 },
+  { id: '1', timestamp: new Date(Date.now() - 5000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 }), type: 'CAN', messageId: '0x1A0', sender: 'Engine ECU', data: ['01', '23', '45', '67', '89', 'AB', 'CD', 'EF'], dlc: 8 },
+  { id: '2', timestamp: new Date(Date.now() - 4500).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 }), type: 'LIN', messageId: '0x3C', sender: 'Climate Control', data: ['F0', 'E1'], dlc: 2 },
+  { id: '3', timestamp: new Date(Date.now() - 4000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 }), type: 'CAN', messageId: '0x2B1', sender: 'Brake ECU', data: ['11', '22', '33', '44'], dlc: 4 },
+  { id: '4', timestamp: new Date(Date.now() - 3000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 }), type: 'CAN', messageId: '0x1A0', sender: 'Engine ECU', data: ['01', '24', '45', '67', '89', 'AB', 'CD', 'EF'], dlc: 8 },
+  { id: '5', timestamp: new Date(Date.now() - 2000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 }), type: 'LIN', messageId: '0x3D', sender: 'Window Sensor', data: ['A5'], dlc: 1 },
+  { id: '6', timestamp: new Date(Date.now() - 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 }), type: 'CAN', messageId: '0x4F0', sender: 'Gateway', data: ['DE', 'AD', 'BE', 'EF', '00', '11', '22', '33'], dlc: 8 },
 ];
 
 export const mockEcuNodes: EcuNode[] = [
   { id: 'ecu1', name: 'Engine ECU', type: 'Engine ECU', status: 'Running', sendsMessages: [{ messageId: '0x1A0', interval: 100, dataPattern: ['01', 'XX', '45', '67'] }] },
   { id: 'ecu2', name: 'Brake ECU', type: 'Brake ECU', status: 'Simulating', sendsMessages: [{ messageId: '0x2B1', interval: 50, dataPattern: ['YY', '22'] }] },
   { id: 'ecu3', name: 'Sensor Node A', type: 'Sensor Node', status: 'Stopped', sendsMessages: [{ messageId: '0x300', interval: 1000, dataPattern: ['S1', '00'] }] },
+  { id: 'ecu4', name: 'Gateway', type: 'Gateway', status: 'Running', sendsMessages: [{ messageId: '0x4F0', interval: 250, dataPattern: ['DE', 'AD', 'BE', 'EF']}] },
+  { id: 'ecu5', name: 'Body Control', type: 'Custom', status: 'Error', sendsMessages: [{ messageId: '0x500', interval: 500, dataPattern: ['00', '00']}] },
 ];
+
+const generateTimeSeriesData = (numPoints: number, minVal: number, maxVal: number, startTime: number = 10): ChartDataPoint[] => {
+  const data: ChartDataPoint[] = [];
+  for (let i = 0; i < numPoints; i++) {
+    data.push({
+      time: `${String(startTime + i).padStart(2, '0')}:00`,
+      value: Math.floor(Math.random() * (maxVal - minVal + 1)) + minVal,
+    });
+  }
+  return data;
+};
 
 export const mockSignalData: SignalData[] = [
   {
     name: 'Speed',
     unit: 'km/h',
     color: 'hsl(var(--chart-1))',
-    data: [
-      { time: '10:00', value: 60 }, { time: '10:01', value: 65 }, { time: '10:02', value: 70 },
-      { time: '10:03', value: 68 }, { time: '10:04', value: 72 }, { time: '10:05', value: 75 },
-    ],
+    data: generateTimeSeriesData(10, 50, 80),
   },
   {
     name: 'Temperature',
     unit: '°C',
     color: 'hsl(var(--chart-2))',
-    data: [
-      { time: '10:00', value: 22 }, { time: '10:01', value: 22.5 }, { time: '10:02', value: 23 },
-      { time: '10:03', value: 23 }, { time: '10:04', value: 22.8 }, { time: '10:05', value: 23.5 },
-    ],
+    data: generateTimeSeriesData(10, 15, 30),
   },
   {
     name: 'Battery Voltage',
     unit: 'V',
     color: 'hsl(var(--chart-3))',
-    data: [
-      { time: '10:00', value: 12.5 }, { time: '10:01', value: 12.6 }, { time: '10:02', value: 12.4 },
-      { time: '10:03', value: 12.5 }, { time: '10:04', value: 12.6 }, { time: '10:05', value: 12.5 },
-    ],
+    data: generateTimeSeriesData(10, 12, 14),
   },
+  {
+    name: 'Engine Load',
+    unit: '%',
+    color: 'hsl(var(--chart-4))',
+    data: generateTimeSeriesData(10, 20, 90),
+  }
 ];
 
 export const mockLearningModules: LearningModule[] = [
@@ -127,9 +138,9 @@ export const mockQuizQuestions: QuizQuestion[] = [
 
 // Helper to get a new message for real-time simulation
 let messageCounter = 0;
-const ecuSenders = ['Engine ECU', 'Brake ECU', 'Dashboard', 'Infotainment'];
-const canIds = ['0x1A0', '0x2B1', '0x3C2', '0x4D3', '0x5E4'];
-const linIds = ['0x10', '0x2A', '0x3F'];
+const ecuSenders = ['Engine ECU', 'Brake ECU', 'Dashboard', 'Infotainment', 'Gateway', 'Climate Control'];
+const canIds = ['0x1A0', '0x2B1', '0x3C2', '0x4D3', '0x5E4', '0x18DAF110', '0x7DF'];
+const linIds = ['0x10', '0x2A', '0x3F', '0x0C'];
 
 export function generateMockBusMessage(): BusMessage {
   messageCounter++;

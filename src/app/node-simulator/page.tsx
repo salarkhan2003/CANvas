@@ -1,17 +1,21 @@
+
 'use client';
 
 import * as React from 'react';
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Cpu, PlusCircle, Play, StopCircle, Trash2, Edit3 } from 'lucide-react';
-import type { EcuNode } from '@/lib/types';
+import { Cpu, PlusCircle, Play, StopCircle, Trash2, Edit3, PieChart as PieChartIcon } from 'lucide-react';
+import type { EcuNode, CountData } from '@/lib/types';
 import { mockEcuNodes } from '@/lib/mock-data';
 import { useToast } from '@/hooks/use-toast';
+import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import { ChartConfig, ChartContainer, ChartTooltipContent, ChartLegendContent } from '@/components/ui/chart';
+
 
 const initialNodeFormState: Partial<EcuNode> = {
   name: '',
@@ -19,12 +23,38 @@ const initialNodeFormState: Partial<EcuNode> = {
   sendsMessages: [{ messageId: '0x', interval: 100, dataPattern: ['00'] }],
 };
 
+const NODE_STATUS_COLORS: Record<EcuNode['status'], string> = {
+  Running: 'hsl(var(--chart-1))',
+  Simulating: 'hsl(var(--chart-2))',
+  Stopped: 'hsl(var(--chart-3))',
+  Error: 'hsl(var(--chart-4))',
+};
+
+const initialChartConfig = {
+  nodes: { label: "Nodes" },
+  Running: { label: "Running", color: NODE_STATUS_COLORS.Running },
+  Simulating: { label: "Simulating", color: NODE_STATUS_COLORS.Simulating },
+  Stopped: { label: "Stopped", color: NODE_STATUS_COLORS.Stopped },
+  Error: { label: "Error", color: NODE_STATUS_COLORS.Error },
+} satisfies ChartConfig;
+
+
 export default function NodeSimulatorPage() {
   const [nodes, setNodes] = React.useState<EcuNode[]>(mockEcuNodes);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [editingNode, setEditingNode] = React.useState<EcuNode | null>(null);
   const [nodeForm, setNodeForm] = React.useState<Partial<EcuNode>>(initialNodeFormState);
   const { toast } = useToast();
+
+  const nodeStatusCounts = React.useMemo(() => {
+    const counts: Record<string, number> = { Running: 0, Simulating: 0, Stopped: 0, Error: 0 };
+    nodes.forEach(node => {
+      counts[node.status] = (counts[node.status] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .map(([name, value]) => ({ name, value, fill: NODE_STATUS_COLORS[name as EcuNode['status']] }))
+      .filter(item => item.value > 0);
+  }, [nodes]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -114,7 +144,6 @@ export default function NodeSimulatorPage() {
           </Button>
         }
       />
-
       {nodes.length === 0 ? (
          <Card className="flex flex-col items-center justify-center py-12 text-center">
             <CardHeader>
@@ -129,6 +158,30 @@ export default function NodeSimulatorPage() {
             </CardContent>
         </Card>
       ) : (
+        <>
+        <Card className="mb-6">
+            <CardHeader>
+                <CardTitle className="font-headline flex items-center gap-2">
+                    <PieChartIcon className="h-5 w-5 text-accent"/> Node Status Overview
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="flex justify-center">
+                <ChartContainer config={initialChartConfig} className="h-[200px] w-full max-w-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                            <Tooltip content={<ChartTooltipContent hideLabel />} />
+                            <Pie data={nodeStatusCounts} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} labelLine={false} label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}>
+                                {nodeStatusCounts.map((entry) => (
+                                    <Cell key={`cell-${entry.name}`} fill={entry.fill} />
+                                ))}
+                            </Pie>
+                            <Legend content={<ChartLegendContent />} />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </ChartContainer>
+            </CardContent>
+        </Card>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {nodes.map((node) => (
             <Card key={node.id} className="flex flex-col">
@@ -169,6 +222,7 @@ export default function NodeSimulatorPage() {
             </Card>
           ))}
         </div>
+        </>
       )}
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

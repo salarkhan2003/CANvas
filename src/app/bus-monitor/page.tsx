@@ -35,6 +35,7 @@ export default function BusMonitorPage() {
   const { toast } = useToast();
 
   React.useEffect(() => {
+    // Initialize with mock messages only on the client after hydration
     setMessages(mockBusMessages);
   }, []);
 
@@ -42,8 +43,8 @@ export default function BusMonitorPage() {
     let intervalId: NodeJS.Timeout;
     if (isPlaying) {
       intervalId = setInterval(() => {
-        setMessages(prev => [...prev, generateMockBusMessage()].slice(-200)); // Keep last 200 for chart performance
-      }, 500); // Increased frequency for better chart updates
+        setMessages(prev => [...prev, generateMockBusMessage()].slice(-200)); 
+      }, 500); 
     }
     return () => clearInterval(intervalId);
   }, [isPlaying]);
@@ -74,8 +75,8 @@ export default function BusMonitorPage() {
     });
     const chartData = Object.entries(counts)
       .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value) // Sort by count descending
-      .slice(0, 10); // Take top 10
+      .sort((a, b) => b.value - a.value) 
+      .slice(0, 10); 
     setMessageIdCounts(chartData);
   }, [filteredMessages]);
 
@@ -143,7 +144,7 @@ export default function BusMonitorPage() {
               Filters & Actions
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
             <Input placeholder="Filter by Message ID (e.g., 0x1A0)" value={filterId} onChange={e => setFilterId(e.target.value)} className="font-code"/>
             <Input placeholder="Filter by Data Content (e.g., FF00)" value={filterContent} onChange={e => setFilterContent(e.target.value)} className="font-code"/>
             <Input placeholder="Filter by Sender (e.g., Engine ECU)" value={filterSender} onChange={e => setFilterSender(e.target.value)} />
@@ -157,19 +158,21 @@ export default function BusMonitorPage() {
                 <SelectItem value="LIN">LIN</SelectItem>
               </SelectContent>
             </Select>
-            <div className="col-span-full sm:col-span-2 flex justify-end items-center gap-2 pt-2">
-               <div className="flex items-center space-x-2 mr-auto">
+            <div className="col-span-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 pt-2">
+               <div className="flex items-center space-x-2">
                   <Checkbox id="autoscroll" checked={autoScroll} onCheckedChange={(checked) => setAutoScroll(Boolean(checked))} />
                   <Label htmlFor="autoscroll" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                   Auto-scroll
                   </Label>
               </div>
-              <Button onClick={handleExportCsv} variant="outline" size="sm">
-                <FileText className="mr-2 h-4 w-4" /> CSV
-              </Button>
-              <Button onClick={handleExportJson} variant="outline" size="sm">
-                <FileJson className="mr-2 h-4 w-4" /> JSON
-              </Button>
+              <div className="flex gap-2 flex-wrap justify-start sm:justify-end">
+                  <Button onClick={handleExportCsv} variant="outline" size="sm">
+                    <FileText className="mr-2 h-4 w-4" /> CSV
+                  </Button>
+                  <Button onClick={handleExportJson} variant="outline" size="sm">
+                    <FileJson className="mr-2 h-4 w-4" /> JSON
+                  </Button>
+              </div>
             </div>
           </CardContent>
         </Card>

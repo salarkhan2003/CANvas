@@ -38,7 +38,7 @@ export default function AdvancedDiagnosticsPage() {
     toast({ title: 'UDS Request Sent (Mock)' });
     // Simulate response
     setTimeout(() => {
-      if (udsServiceId === '22' && udsDid === 'F190') setObdResponse('62 F1 90 57 49 4E 31 32 33 ...'); // Mock VIN
+      if (udsServiceId === '22' && udsDid === 'F190') setUdsResponse('62 F1 90 57 49 4E 31 32 33 ...'); // Mock VIN. Corrected: was setObdResponse
       else if (udsServiceId === '10' && udsDid === '01') setUdsResponse('50 01 00 32 01 F4'); // Mock Diagnostic Session Control Positive Response
       else setUdsResponse('7F ' + udsServiceId + ' 11'); // Negative response: serviceNotSupported
     }, 500);
@@ -87,7 +87,7 @@ export default function AdvancedDiagnosticsPage() {
               <CardDescription>Simulate sending UDS requests and view mock responses.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="udsServiceId">Service ID (Hex, e.g., 10, 22, 2E)</Label>
                   <Input id="udsServiceId" value={udsServiceId} onChange={(e) => setUdsServiceId(e.target.value)} className="font-code" />

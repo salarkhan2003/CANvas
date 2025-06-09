@@ -35,11 +35,12 @@ export interface ChartDataPoint {
   time?: string; // Formatted time or category for time-series
   name?: string; // For categorical data like message IDs or statuses
   value: number;
-  fill?: string; // For individual bar/segment colors
+  fill?: string; // For individual bar/segment colors in some charts
+  unit?: string; // Optional unit for tooltip display
 }
 
 export interface SignalData {
-  name: 'Speed' | 'Temperature' | 'Battery Voltage' | 'Engine Load' | string; // Signal name
+  name: 'Vehicle Speed' | 'Coolant Temp' | 'Battery Voltage' | 'Engine Load' | string; // Signal name
   unit: 'km/h' | '°C' | 'V' | '%' | string; // Signal unit
   data: ChartDataPoint[]; // Array of data points for the chart
   color?: string; // Optional color for the chart series
@@ -65,4 +66,5 @@ export interface CountData {
   name: string;
   value: number;
   fill?: string;
+  unit?: string; // Added unit for dashboard stats
 }

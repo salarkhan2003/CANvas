@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -15,7 +16,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
 export default function BusMonitorPage() {
-  const [messages, setMessages] = React.useState<BusMessage[]>(mockBusMessages);
+  const [messages, setMessages] = React.useState<BusMessage[]>([]); // Initialize with empty array
   const [isPlaying, setIsPlaying] = React.useState(true);
   const [filterId, setFilterId] = React.useState('');
   const [filterContent, setFilterContent] = React.useState('');
@@ -23,6 +24,11 @@ export default function BusMonitorPage() {
   const [filterType, setFilterType] = React.useState<'ALL' | 'CAN' | 'LIN'>('ALL');
   const [autoScroll, setAutoScroll] = React.useState(true);
   const scrollAreaRef = React.useRef<HTMLDivElement>(null);
+
+  // Populate initial messages on client-side after hydration
+  React.useEffect(() => {
+    setMessages(mockBusMessages);
+  }, []);
 
   React.useEffect(() => {
     let intervalId: NodeJS.Timeout;
@@ -138,10 +144,17 @@ export default function BusMonitorPage() {
                     <TableCell className="truncate max-w-xs">{msg.data.join(' ')}</TableCell>
                   </TableRow>
                 ))}
-                {filteredMessages.length === 0 && (
+                {filteredMessages.length === 0 && messages.length > 0 && ( // Show only if messages is populated but filtered is empty
                   <TableRow>
                     <TableCell colSpan={6} className="text-center text-muted-foreground">
-                      No messages match your filters or log is empty.
+                      No messages match your filters.
+                    </TableCell>
+                  </TableRow>
+                )}
+                {messages.length === 0 && ( // Show if messages is truly empty (initial state or cleared)
+                   <TableRow>
+                    <TableCell colSpan={6} className="text-center text-muted-foreground">
+                      Log is empty or loading initial messages...
                     </TableCell>
                   </TableRow>
                 )}

@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 10%; /* Deep Space Blue */
+    --foreground: 210 30% 95%; /* Pale Frost */
+
+    --card: 220 20% 15%; /* Darker Space Blue */
+    --card-foreground: 210 30% 95%;
+
+    --popover: 220 20% 13%; /* Slightly darker popover */
+    --popover-foreground: 210 30% 95%;
+
+    --primary: 190 100% 50%; /* Electric Cyan */
+    --primary-foreground: 220 20% 5%; /* Very Dark Blue for contrast on Cyan */
+
+    --secondary: 220 20% 20%; /* Medium Space Blue */
+    --secondary-foreground: 210 30% 85%;
+
+    --muted: 220 20% 20%;
+    --muted-foreground: 210 30% 65%; /* Grayer text */
+
+    --accent: 270 90% 65%; /* Neon Violet */
+    --accent-foreground: 0 0% 100%; /* White for contrast on Violet */
+
+    --destructive: 0 75% 55%; /* Vivid Red */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 20% 25%; /* Slightly Lighter Space Blue for borders */
+    --input: 220 20% 25%;
+    --ring: 190 100% 60%; /* Brighter Electric Cyan for focus rings */
+
+    --radius: 0.5rem;
+
+    /* Chart colors for the new theme */
+    --chart-1: 190 100% 50%; /* Electric Cyan */
+    --chart-2: 270 90% 65%; /* Neon Violet */
+    --chart-3: 150 100% 45%; /* Cyber Green */
+    --chart-4: 320 90% 60%; /* Vibrant Magenta (Changed from Pulse Orange) */
+    --chart-5: 220 30% 70%; /* Medium Frost - for pending/neutral states */
+
+    /* Sidebar specific colors based on the new theme */
+    --sidebar-background: 220 20% 8%; /* Even darker for sidebar */
+    --sidebar-foreground: 210 30% 90%;
+    --sidebar-primary: 190 100% 50%; /* Electric Cyan for active/primary items in sidebar */
+    --sidebar-primary-foreground: 220 20% 5%;
+    --sidebar-accent: 220 20% 18%; /* Hover/accent in sidebar */
+    --sidebar-accent-foreground: 210 30% 98%;
+    --sidebar-border: 220 20% 22%;
+    --sidebar-ring: 190 100% 60%;
+  }
+
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}

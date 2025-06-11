@@ -1,3 +1,4 @@
+
 import type { LucideIcon } from 'lucide-react';
 
 interface PageHeaderProps {
@@ -18,7 +19,7 @@ export function PageHeader({ title, description, icon: IconComponent, actions }:
           </div>
           {description && <p className="mt-1.5 text-sm md:text-base text-muted-foreground">{description}</p>}
         </div>
-        {actions && <div className="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-2 items-start sm:items-center">{actions}</div>}
+        {actions && <div className="mt-4 sm:mt-0 flex flex-col sm:flex-row flex-wrap gap-2 items-start sm:items-center">{actions}</div>}
       </div>
     </div>
   );

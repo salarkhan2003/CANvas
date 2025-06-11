@@ -211,7 +211,7 @@ export default function NodeSimulatorPage() {
                   <p className="text-sm text-muted-foreground font-code">No messages configured.</p>
                 )}
               </CardContent>
-              <CardFooter className="flex gap-2">
+              <CardFooter className="flex flex-wrap gap-2">
                 <Button variant="outline" size="sm" onClick={() => toggleNodeStatus(node.id)}>
                   {node.status === 'Running' || node.status === 'Simulating' ? <StopCircle className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
                   {node.status === 'Running' || node.status === 'Simulating' ? 'Stop' : 'Start'}

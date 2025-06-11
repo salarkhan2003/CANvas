@@ -35,34 +35,34 @@ export const mockSignalData: SignalData[] = [
   {
     name: 'Vehicle Speed',
     unit: 'km/h',
-    color: 'var(--color-chart-1)',
+    color: 'hsl(var(--chart-1))',
     data: generateTimeSeriesData(10, 50, 80),
   },
   {
     name: 'Coolant Temp',
     unit: '°C',
-    color: 'var(--color-chart-2)',
+    color: 'hsl(var(--chart-2))',
     data: generateTimeSeriesData(10, 70, 95),
   },
   {
     name: 'Battery Voltage',
     unit: 'V',
-    color: 'var(--color-chart-3)',
+    color: 'hsl(var(--chart-3))',
     data: generateTimeSeriesData(10, 12, 14).map(d => ({...d, value: parseFloat(d.value.toFixed(1))})),
   },
   {
     name: 'Engine Load',
     unit: '%',
-    color: 'var(--color-chart-4)',
+    color: 'hsl(var(--chart-4))',
     data: generateTimeSeriesData(10, 20, 90),
   }
 ];
 
 export const mockDashboardStats: CountData[] = [
-    { name: 'Bus Load Avg', value: Math.floor(Math.random() * 30) + 40, unit: '%', fill: 'var(--color-chart-1)' },
-    { name: 'Active Nodes', value: Math.floor(Math.random() * 5) + 8, unit: 'ECUs', fill: 'var(--color-chart-2)' },
-    { name: 'Error Rate', value: Math.floor(Math.random() * 5), unit: '%', fill: 'var(--color-chart-4)' },
-    { name: 'Network Health', value: 100 - (Math.floor(Math.random() * 5)), unit: '%', fill: 'var(--color-chart-3)' },
+    { name: 'Bus Load Avg', value: Math.floor(Math.random() * 30) + 40, unit: '%', fill: 'hsl(var(--chart-1))' },
+    { name: 'Active Nodes', value: Math.floor(Math.random() * 5) + 8, unit: 'ECUs', fill: 'hsl(var(--chart-2))' },
+    { name: 'Error Rate', value: Math.floor(Math.random() * 5), unit: '%', fill: 'hsl(var(--chart-4))' },
+    { name: 'Network Health', value: 100 - (Math.floor(Math.random() * 5)), unit: '%', fill: 'hsl(var(--chart-3))' },
 ];
 
 
@@ -200,3 +200,4 @@ export function generateMockBusMessage(): BusMessage {
     dlc,
   };
 }
+
